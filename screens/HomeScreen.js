@@ -1,59 +1,104 @@
-import { View, Text, SafeAreaView, Image, TouchableOpacity } from 'react-native'
-import React, {useLayoutEffect} from 'react'
-import * as Animatable from 'react-native-animatable';
+import {
+  View,
+  Text,
+  SafeAreaView,
+  Image,
+  TouchableOpacity,
+  TextInput,
+  ScrollView,
+} from "react-native";
+import React, { useLayoutEffect, useEffect, useState } from "react";
+import { FontAwesome5 } from "@expo/vector-icons";
 
-import {useNavigation} from '@react-navigation/native'
-import {HeroImage} from '../assets'
+import { useNavigation } from "@react-navigation/native";
+
+import SanityClient from "../sanity";
+
+import Categories from "../components/Categories";
+import FeaturedRow from "../components/FeaturedRow";
 const HomeScreen = () => {
-    const navigation= useNavigation()
-    useLayoutEffect(()=>{
-        navigation.setOptions({
-         headerShown:false,
-        })
-    },[])
+  const navigation = useNavigation();
+  const [featuredCategories, setFeaturedCategories] = useState([]);
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: false,
+    });
+  }, []);
+
+  useEffect(() => {}, [
+    SanityClient.fetch(
+      `
+      *[_type == "featured"] {
+        ...,
+        restaurants[]->{
+          ...,
+          dishes[] ->
+        }
+      }`
+    ).then((data) => {
+      setFeaturedCategories(data);
+    }),
+  ]);
+  // console.log("setFeaturedCategories", setFeaturedCategories);
   return (
-    <SafeAreaView className="flex-1 relative">
-
-{/* first header section */}
-    <View className="flex-row px-6 mt-8 items-center ">
-      <View className=" w-16 h-16 rounded-full bg-black items-center justify-center">
-      <Text className="text-[#00BCC9] text-3xl font-semibold">D</Text>
-
-
+    <SafeAreaView className="relative bg-white pt-3">
+      {/* first header section */}
+      <View className="flex-row px-4 mt-8 items-center ">
+        {/* <View className=" w-16 h-16 rounded-full bg-black items-center justify-center">
+          <Text className="text-[#00BCC9] text-3xl font-semibold">D</Text>
+        </View> */}
+        {/* <Image
+          source={{ uri: "https://links.papareact.com/wru" }}
+          className="w-7 h-7 rounded-full bg-gray-300 p-2 "
+        /> */}
+        <Image
+          source={{
+            uri: "https://payload.cargocollective.com/1/15/494563/13468564/roo-03_1340_c.jpg",
+          }}
+          className="h-7 w-7 bg-gray-300 p-4 rounded-full"
+        />
+        {/* <View className="flex-1 flex-row"> */}
+        <View className=" m-2 flex-col">
+          <Text className="text-gray-800">Deliver now!</Text>
+          <Text className="font-semibold">Current location</Text>
+        </View>
+        <FontAwesome5 name="chevron-down" size={20} color="#00CCBB" />
+        <FontAwesome5 name="user" size={24} color="#00CCBB" />
+        {/* </View> */}
       </View>
-      <Text className="text-[#2A2B4B] text-3xl font-semibold" > Blog</Text>
-    </View>
 
+      {/* search */}
+      <View className="flex-row items-center space-x-2 mx-4 pb-2">
+        <View className="p-2 items-center flex-row flex-1 bg-gray-200 space-x-2">
+          <FontAwesome5 name="search" size={20} color="gray" />
+          <TextInput
+            placeholder="Restaurents and cuisine"
+            keyboardType="default"
+          />
+        </View>
 
-{/* second text */}
-    <View className="px-6 mt-8  space-y-3">
-        <Text className="text-[#3C6072] text-[42px]">The world of</Text>
-        <Text className="text-[#00BCC9] text-[38px] font-bold">Knowledge</Text>
-        <Text className="text-[#3C6072] text-base">The blogging app with learn and earn feature by rewarding the followers based on engagement rate.</Text>
-    </View>
+        <FontAwesome5 name="filter" size={20} color="#00CCBB" />
+      </View>
 
-
-{/* circle section */}
-{/* <View className=" w-[400px] h-[400px] rounded-full bg-[#00BCC9] absolute bottom-36 -right-36" >
-</View> */}
-{/* <View className=" w-[400px] h-[400px] rounded-full bg-[#E99265] absolute -bottom-28 -left-36" >
-</View> */}
-{/* image container */}
-<View className="flex-1 relative items-center justify-center">
-<Animatable.Image animation="fadeIn"  easing="ease-in-out"  className="w-full h-full object-cover mt-20" source={HeroImage}/>
-
-{/* go button */}
-<TouchableOpacity onPress={()=>{
-    navigation.navigate("MyTabs")
-}} className="absolute bottom-20 w-24 h-24 border-l-2 border-r-2 border-t-4 border-[#00BCC9] rounded-full items-center justify-center">
-    <Animatable.View animation="pulse" iterationCount={"infinite"} easing="ease-in-out" className="w-20 h-20 items-center justify-center bg-[#00BCC9] rounded-full">
-        <Text className=" text-gray-50 text-[24px] font-semibold">Go</Text>
-    </Animatable.View>
-</TouchableOpacity>
-</View>
+      {/* body */}
+      <ScrollView
+        className="bg-gray-100 "
+        contentContainerStyle={{ paddingBottom: 100 }}
+      >
+        {/* categories */}
+        <Categories />
+        {featuredCategories?.map((category) => (
+          <FeaturedRow
+            key={category._id}
+            id={category._id}
+            title={category.name}
+            description={category.short_description}
+          />
+        ))}
+        {/* featured row */}
+      </ScrollView>
     </SafeAreaView>
- 
-  )
-}
+  );
+};
 
-export default HomeScreen
+export default HomeScreen;
