@@ -41,7 +41,7 @@ const HomeScreen = () => {
   ]);
   // console.log("setFeaturedCategories", setFeaturedCategories);
   return (
-    <SafeAreaView className="relative bg-white pt-3">
+    <SafeAreaView className="relative bg-white pt-3 mb-14">
       {/* first header section */}
       <View className="flex-row px-4 mt-8 items-center ">
         {/* <View className=" w-16 h-16 rounded-full bg-black items-center justify-center">
@@ -63,7 +63,7 @@ const HomeScreen = () => {
           <Text className="font-semibold">Current location</Text>
         </View>
         <FontAwesome5 name="chevron-down" size={20} color="#00CCBB" />
-        <FontAwesome5 name="user" size={24} color="#00CCBB" />
+        {/* <FontAwesome5 name="user" size={24} color="#00CCBB" /> */}
         {/* </View> */}
       </View>
 

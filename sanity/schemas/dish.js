@@ -16,7 +16,7 @@ export default defineType({
     {
       name: 'short_description',
       type: 'string',
-      title: 'short description',
+      title: 'short_description',
       validation: (Rule) => {
         Rule.max(200)
       },
